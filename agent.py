@@ -8,19 +8,28 @@ password = "9uiyFFWgF_"
 
 # 记录最新消息
 room_session = {}  # 房间
-room_input_message = {}  # 输入
-room_output_message = {}  # 回答
 
 
 def answer(sessionToken, roomId, message):
     r = requests.post(url=url + "/api/room/{}".format(roomId), params={"roomId": roomId, "session": sessionToken},
                       data=message).json()
 
+def get_room_input_message_record(roomId):
+    if room_session.__contains__(roomId):
+        return room_session[roomId]
+    else:
+        room_input_message = {}
+        room_session[roomId] = room_input_message
+        return room_input_message
+
 
 # 单个房间信息处理
 def list_rooms(sessionToken, room):
     print(room)
     roomId = room['uid']
+
+    room_input_message = get_room_input_message_record(roomId)
+
     roomInfo = requests.get(url=url + "/api/room/{}/{}".format(roomId, room['startTime']),
                             params={"roomId": roomId, "since": room['startTime'], "session": sessionToken}).json()
     print(roomInfo)
