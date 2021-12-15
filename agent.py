@@ -1,5 +1,5 @@
 import time
-
+from answer import question
 import requests
 
 url = "https://speakeasy.ifi.uzh.ch"
@@ -11,8 +11,10 @@ room_session = {}  # 房间
 
 
 def answer(sessionToken, roomId, message):
+    ans = question(message)
     r = requests.post(url=url + "/api/room/{}".format(roomId), params={"roomId": roomId, "session": sessionToken},
-                      data=message).json()
+                      data=ans).json()
+    print(r)
 
 def get_room_input_message_record(roomId):
     if room_session.__contains__(roomId):
@@ -46,9 +48,6 @@ def list_rooms(sessionToken, room):
         last_message_ordinal = last_message['ordinal']
         print(f"最新查询到的会话信息标号是:{last_message_ordinal}")
 
-        # 这个布尔变量是标记此消息是否被处理过的
-        message_input_arrived = False
-
         if room_input_message.__contains__(message_session):
             map_last_message = room_input_message[message_session]
             map_last_message_time = map_last_message['timeStamp']
@@ -63,7 +62,7 @@ def list_rooms(sessionToken, room):
         print(f"是否有未处理的新消息{message_input_arrived}")
 
         if message_input_arrived:
-            answer(sessionToken, roomId, "This is an answer!")
+            answer(sessionToken, roomId, last_message['message'])
     else:
         print("此房间没有消息")
         return
@@ -88,5 +87,5 @@ if __name__ == '__main__':
     sessionToken = r['sessionToken']
     print(sessionToken)
     while True:
-        time.sleep(3)
+        time.sleep(1)
         start_agent(sessionToken)

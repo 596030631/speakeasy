@@ -22,7 +22,7 @@ def question(question):
         answer = 'Karan'
         return answer
     else:
-        answer = '无法回答';
+        answer = '...';
         return answer
 
 
